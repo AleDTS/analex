@@ -10,7 +10,7 @@ class Lexi
   puts "Entre com o texto a ser analisada:"
   input = "program programa1;
 begin
-@aux=10.65;
+@aux>=10.65;
 end. "
   state = 0
   line = 0
@@ -104,13 +104,18 @@ end. "
             break
           end
         when 6
-          if end_string.include? character or special.include? lexema
+          if special.include? character
+          lexema << character
+          elsif end_string.include? character or special.include? lexema
             puts "Simbolo Reservado #{lexema}"
             lexema = String.new
             lexema << character
             state = 0
           else
+            puts "Simbolo invalido"
+            lexema = String.new
             lexema << character
+            state = 0
           end
         else
           puts "Error na entrada"
