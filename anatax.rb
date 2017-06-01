@@ -221,13 +221,13 @@ class Anatax
             if eof
               puts "EOF. Erro na linha #{line}."
               return false
+            elsif
+              token == "end"
+              return true
             elsif token == ";"
               nxt
               if statement
                 nxt
-                if token == "end"
-                  return true
-                end
               end
             end
           end
@@ -251,7 +251,11 @@ class Anatax
 
   def simple_statement
     puts "#{token} - simple_statement"
-    if assignment_statement or read_statement or write_statement
+    if assignment_statement
+      return true
+    elsif read_statement
+      return true
+    elsif write_statement
       return true
     end
     return false
@@ -415,26 +419,32 @@ class Anatax
     end
     return false
   end
-
+  
   def simple_expression
     puts "#{token} - simple_expression"
     if sign
       nxt
       if term
         nxt
+        aux = @@i
         if !adding_operator
           back
           return true
         else
           while true
+            @@i = aux
             if eof
               puts "EOF. Erro na linha #{line}."
               return false
-            elsif term
+            elsif adding_operator
               nxt
-              if !adding_operator
-                back
-                return true
+              if term
+                nxt
+                aux = @@i
+                if !adding_operator
+                  back
+                  return true
+                end
               end
             end
           end
@@ -456,15 +466,18 @@ class Anatax
       else
         while true
           @@i = aux
-          if EOFError
+          if eof
             puts "EOF. Erro na linha #{line}."
             return false
-          elsif factor
+          elsif multiplying_operator
             nxt
-            @@i = aux
-            if !multiplying_operator
-              back
-              return true
+            if factor
+              nxt
+              aux = @@i
+              if !multiplying_operator
+                back
+                return true
+              end
             end
           end
         end
@@ -476,7 +489,6 @@ class Anatax
   def factor
     puts "#{token} - factor"
     if variable or token == "NUMBER" #or constant
-      # puts "hey"
       return true
     elsif token == "("
       nxt
@@ -514,7 +526,7 @@ class Anatax
   end
 
   def adding_operator
-    puts "#{token} - operator"
+    puts "#{token} - adding_operator"
     if ["+","-"].include? token
       return true
     end
