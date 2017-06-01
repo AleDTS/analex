@@ -42,14 +42,13 @@ class Anatax
           if block
             nxt
             if token == "."
-              puts "Sintaxe correta."
               return true
             end
           end
         end
       end
     end
-    false
+    return false
   end
 
   def block
@@ -60,7 +59,7 @@ class Anatax
         return true
       end
     end
-    false
+    return false
   end
 
   #------------------------------------------
@@ -75,7 +74,7 @@ class Anatax
           nxt
           aux = @@i
           if !variable_declaration
-            # back
+            back
             return true
           else
             while true
@@ -90,7 +89,7 @@ class Anatax
                   aux = @@i
                   if !variable_declaration
                     # puts "hey"
-                    # back
+                    back
                     return true
                   end
                 end
@@ -103,7 +102,7 @@ class Anatax
       back
       return true
     end
-    false
+    return false
   end
 
   def variable_declaration
@@ -119,9 +118,10 @@ class Anatax
             return false
           elsif token == ","
             nxt
-            if identifier
+            if token == "IDENTIFIER"
               nxt
               if token == ":"
+                nxt
                 break
               end
             end
@@ -132,7 +132,7 @@ class Anatax
         return true
       end
     end
-    false
+    return false
   end
 
   def type
@@ -142,7 +142,7 @@ class Anatax
     elsif array_type
       return true
     end
-    false
+    return false
   end
 
   def array_type
@@ -165,7 +165,7 @@ class Anatax
         end
       end
     end
-    false
+    return false
   end
 
   def index_range
@@ -179,7 +179,7 @@ class Anatax
         end
       end
     end
-    false
+    return false
   end
 
   def simple_type
@@ -187,7 +187,7 @@ class Anatax
     if ["char", "integer", "boolean"].include? token
       return true
     end
-    false
+    return false
   end
 
   def type_identifier
@@ -195,7 +195,7 @@ class Anatax
     if token == "IDENTIFIER"
       return true
     end
-    false
+    return false
   end
 
   #------------------------------------------
@@ -205,7 +205,7 @@ class Anatax
     if compound_statement
       return true
     end
-    false
+    return false
   end
 
   def compound_statement
@@ -234,6 +234,7 @@ class Anatax
         end
       end
     end
+    return false
   end
 
   def statement
@@ -243,7 +244,7 @@ class Anatax
     elsif structured_statement
       return true
     end
-    false
+    return false
   end
 
   #------------------------------------------
@@ -253,7 +254,7 @@ class Anatax
     if assignment_statement or read_statement or write_statement
       return true
     end
-    false
+    return false
   end
 
   def assignment_statement
@@ -267,7 +268,7 @@ class Anatax
         end
       end
     end
-    false
+    return false
   end
 
   def read_statement
@@ -298,7 +299,7 @@ class Anatax
         end
       end
     end
-    false
+    return false
   end
 
   def write_statement
@@ -329,7 +330,7 @@ class Anatax
         end
       end
     end
-    false
+    return false
   end
 
   #------------------------------------------
@@ -343,7 +344,7 @@ class Anatax
     elsif while_statement
       return true
     end
-    false
+    return false
   end
 
   def if_statement
@@ -377,7 +378,7 @@ class Anatax
         end
       end
     end
-    false
+    return false
   end
 
   def while_statement
@@ -394,7 +395,7 @@ class Anatax
         end
       end
     end
-    false
+    return false
   end
 
   #------------------------------------------
@@ -412,7 +413,7 @@ class Anatax
         end
       end
     end
-    false
+    return false
   end
 
   def simple_expression
@@ -440,7 +441,7 @@ class Anatax
         end
       end
     end
-    false
+    return false
   end
 
   def term
@@ -448,16 +449,19 @@ class Anatax
     if factor
       # puts "hey"
       nxt
+      aux = @@i
       if !multiplying_operator
         back
         return true
       else
         while true
+          @@i = aux
           if EOFError
             puts "EOF. Erro na linha #{line}."
             return false
           elsif factor
             nxt
+            @@i = aux
             if !multiplying_operator
               back
               return true
@@ -466,7 +470,7 @@ class Anatax
         end
       end
     end
-    false
+    return false
   end
 
   def factor
@@ -488,7 +492,7 @@ class Anatax
         return true
       end
     end
-    false
+    return false
   end
 
   #------------------------------------------
@@ -498,7 +502,7 @@ class Anatax
     if ["=","<>","<","<=",">=",">","or","and"].include? token
       return true
     end
-    false
+    return false
   end
 
   def sign
@@ -514,7 +518,7 @@ class Anatax
     if ["+","-"].include? token
       return true
     end
-    false
+    return false
   end
 
   def multiplying_operator
@@ -522,7 +526,7 @@ class Anatax
     if token == "*" or token == "div"
       return true
     end
-    false
+    return false
   end
 
   #------------------------------------------
@@ -534,7 +538,7 @@ class Anatax
     elsif indexed_variable
       return true
     end
-    false
+    return false
   end
 
   def indexed_variable
@@ -552,7 +556,7 @@ class Anatax
         end
       end
     end
-    false
+    return false
   end
 
   def array_variable
@@ -560,7 +564,7 @@ class Anatax
     if entire_variable
       return true
     end
-    false
+    return false
   end
 
   def entire_variable
@@ -568,7 +572,7 @@ class Anatax
     if variable_identifier
       return true
     end
-    false
+    return false
   end
 
   def variable_identifier
@@ -576,11 +580,12 @@ class Anatax
     if ["IDENTIFIER", "STRING"].include? token
       return true
     end
-    false
+    return false
   end
 
   def sintaxAnalisis
     if program
+      puts "Compilado com sucesso."
       return true
     end
     puts "Erro na linha #{line} - #{token}"

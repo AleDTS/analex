@@ -1,20 +1,20 @@
 PROGRAM FACTORIAL ;
 
 VAR
-Factorial: integer ;
-i: integer ;
-N: Integer;
+  Factorial,i,a: integer ;
+  i: integer ;
+  N: Integer;
 
 Begin
-WRITE ('Informe o Valor de N: ');
-READLN (N);
+  WRITE ('Informe o Valor de N: ');
+//  READLN (N);
 
-Factorial:= 1;
-for i:= 1 to N do
-Begin
-Factorial:=Factorial * i;
-end;
+  Factorial:= 1;
+//  for i:= 1 to N do
+//  Begin
+//    Factorial:=Factorial * i;
+//  end;
 
 //Mostra resultado
-WRITE ('O Valor de ', N, ' Factorial é: ', factorial);
+  WRITE ('O Valor de ', N, ' Factorial é: ', factorial);
 End.
