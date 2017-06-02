@@ -407,19 +407,18 @@ class Anatax
   def expression
     puts "#{token} - expression"
     if simple_expression
-      return true
-    elsif simple_expression
-      nxt
       if relational_operator
         nxt
         if simple_expression
           return true
         end
+      else
+        return true
       end
     end
     return false
   end
-  
+
   def simple_expression
     puts "#{token} - simple_expression"
     if sign
@@ -457,7 +456,6 @@ class Anatax
   def term
     puts "#{token} - term"
     if factor
-      # puts "hey"
       nxt
       aux = @@i
       if !multiplying_operator
