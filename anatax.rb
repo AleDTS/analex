@@ -1,6 +1,7 @@
 class Anatax
   @@i = 0
   @@table = Array.new
+
   def initialize(table)
     @@table = table
   end
@@ -21,12 +22,16 @@ class Anatax
       @@table[@@i][1]
   end
 
+  def tokenValue
+    @@table[@@i][0]
+  end
+
   def line
     @@table[@@i][3]
   end
 
-  def eof
-    return @@i == @@table.length
+  def eot
+    @@i == @@table.length
   end
 
   #------------------------------------------
@@ -48,18 +53,18 @@ class Anatax
         end
       end
     end
-    return false
+    false
   end
 
   def block
-    puts "#{token} - block"
+    # puts "#{token} - block"
     if variable_declaration_part
       nxt
       if statement_part
         return true
       end
     end
-    return false
+    false
   end
 
   #------------------------------------------
@@ -71,38 +76,34 @@ class Anatax
       if variable_declaration
         nxt
         if token == ";"
-          nxt
           aux = @@i
+          nxt
           if !variable_declaration
-            back
+            @@i = aux
             return true
           else
+            nxt
             while true
-              @@i = aux
-              if eof
-                puts "EOF. Erro na linha #{line}."
-                return false
-              elsif variable_declaration
+              if token == ";"
+                aux = @@i
                 nxt
-                if token == ";"
+                if !variable_declaration
+                  @@i = aux
+                  return true
+                else
                   nxt
-                  aux = @@i
-                  if !variable_declaration
-                    # puts "hey"
-                    back
-                    return true
-                  end
                 end
+              else
+                return false
               end
             end
           end
         end
       end
     else
-      back
       return true
     end
-    return false
+    false
   end
 
   def variable_declaration
@@ -113,10 +114,7 @@ class Anatax
         nxt
       else
         while true
-          if eof
-            puts "EOF. Erro na linha #{line}."
-            return false
-          elsif token == ","
+          if token == ","
             nxt
             if token == "IDENTIFIER"
               nxt
@@ -125,6 +123,8 @@ class Anatax
                 break
               end
             end
+          else
+            return false
           end
         end
       end
@@ -132,7 +132,7 @@ class Anatax
         return true
       end
     end
-    return false
+    false
   end
 
   def type
@@ -142,7 +142,7 @@ class Anatax
     elsif array_type
       return true
     end
-    return false
+    false
   end
 
   def array_type
@@ -179,7 +179,7 @@ class Anatax
         end
       end
     end
-    return false
+    false
   end
 
   def simple_type
@@ -203,9 +203,10 @@ class Anatax
   def statement_part
     puts "#{token} - statement_part"
     if compound_statement
+    # if token == "end"
       return true
     end
-    return false
+    false
   end
 
   def compound_statement
@@ -218,23 +219,21 @@ class Anatax
           return true
         else
           while true
-            if eof
-              puts "EOF. Erro na linha #{line}."
-              return false
-            elsif
-              token == "end"
-              return true
-            elsif token == ";"
+            if token == ";"
               nxt
               if statement
                 nxt
               end
+            elsif token == "end"
+              return true
+            else
+              return false
             end
           end
         end
       end
     end
-    return false
+    false
   end
 
   def statement
@@ -272,7 +271,7 @@ class Anatax
         end
       end
     end
-    return false
+    false
   end
 
   def read_statement
@@ -287,23 +286,22 @@ class Anatax
             return true
           else
             while true
-              if eof
-                puts "EOF. Erro na linha #{line}."
-                return false
-              elsif token == ")"
-                return true
-              elsif token == ","
+              if token == ","
                 nxt
                 if variable
                   nxt
                 end
+              elsif token == ")"
+                return true
+              else
+                return false
               end
             end
           end
         end
       end
     end
-    return false
+    false
   end
 
   def write_statement
@@ -318,23 +316,22 @@ class Anatax
             return true
           else
             while true
-              if eof
-                puts "EOF. Erro na linha #{line}."
-                return false
-              elsif token == ")"
-                return true
-              elsif token == ","
+              if token == ","
                 nxt
                 if variable
                   nxt
                 end
+              elsif token == ")"
+                return true
+              else
+                return false
               end
             end
           end
         end
       end
     end
-    return false
+    false
   end
 
   #------------------------------------------
@@ -348,41 +345,33 @@ class Anatax
     elsif while_statement
       return true
     end
-    return false
+    false
   end
 
   def if_statement
     puts "#{token} - if_statement"
-    if token == "if"
+    if token == 'if'
       nxt
       if expression
         nxt
-        if token == "then"
-          nxt
-          if statement
-            return true
-          end
-        end
-      end
-    elsif token == "if"
-      nxt
-      if expression
-        nxt
-        if token == "then"
+        if token == 'then'
           nxt
           if statement
             nxt
-            if token == "else"
+            if token == 'else'
               nxt
               if statement
                 return true
               end
+            else
+              back
+              return true
             end
           end
         end
       end
     end
-    return false
+    false
   end
 
   def while_statement
@@ -407,16 +396,18 @@ class Anatax
   def expression
     puts "#{token} - expression"
     if simple_expression
+      nxt
       if relational_operator
         nxt
         if simple_expression
           return true
         end
       else
+        back
         return true
       end
     end
-    return false
+    false
   end
 
   def simple_expression
@@ -424,64 +415,60 @@ class Anatax
     if sign
       nxt
       if term
-        nxt
         aux = @@i
+        nxt
         if !adding_operator
-          back
+          @@i = aux
           return true
         else
+          nxt
           while true
-            @@i = aux
-            if eof
-              puts "EOF. Erro na linha #{line}."
-              return false
-            elsif adding_operator
+            if term
+              aux = @@i
               nxt
-              if term
+              if !adding_operator
+                @@i = aux
+                return true
+              else
                 nxt
-                aux = @@i
-                if !adding_operator
-                  back
-                  return true
-                end
               end
+            else
+              return false
             end
           end
         end
       end
     end
-    return false
+    false
   end
 
   def term
     puts "#{token} - term"
     if factor
-      nxt
       aux = @@i
+      nxt
       if !multiplying_operator
-        back
+        @@i = aux
         return true
       else
+        nxt
         while true
-          @@i = aux
-          if eof
-            puts "EOF. Erro na linha #{line}."
-            return false
-          elsif multiplying_operator
+          if factor
+            aux = @@i
             nxt
-            if factor
+            if !multiplying_operator
+              @@i = aux
+              return true
+            else
               nxt
-              aux = @@i
-              if !multiplying_operator
-                back
-                return true
-              end
             end
+          else
+            return false
           end
         end
       end
     end
-    return false
+    false
   end
 
   def factor
@@ -502,7 +489,7 @@ class Anatax
         return true
       end
     end
-    return false
+    false
   end
 
   #------------------------------------------
@@ -533,10 +520,10 @@ class Anatax
 
   def multiplying_operator
     puts "#{token} - multiplying operator"
-    if token == "*" or token == "div"
+    if token == "*" or token == "/"
       return true
     end
-    return false
+    false
   end
 
   #------------------------------------------
@@ -595,10 +582,10 @@ class Anatax
 
   def sintaxAnalisis
     if program
-      puts "Compilado com sucesso."
+      puts "Sintaxe correta"
       return true
     end
-    puts "Erro na linha #{line} - #{token}"
-    return false
+    puts "Erro na linha #{line} - #{tokenValue}"
+    false
   end
 end
