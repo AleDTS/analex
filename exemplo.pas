@@ -1,16 +1,17 @@
-PROGRAM exemplo ;
+program exemplo5;
 
-
-VAR
-  olar,i,a: integer ;
-  i: char;
-  fac,i,a,a: integer;
-
+var
+  n,k       : integer;
+  f1,f2,f3  : integer;
+begin
+  read(n);
+  f1:=0; f2:=1; k:=1;
+  while k<=n do
   begin
-    write(a,b);
-    if a >= 1 then
-    a := 3
-    else
-    a := 1
-end
-.
+    f3 := f1 + f2;
+    f1 := f2;
+    f2 := f3;
+    k := k + 1
+  end;
+  write(n,f1);
+end.

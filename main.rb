@@ -7,11 +7,17 @@ class Main
   else
     name = ARGV[0]
   end
+
   lex = Analex.new(name)
-  lex.createSymbolTable
-  # lex.printTable
-  tax = Anatax.new(lex.symbol_table)
-  # puts tax.table
-  # puts lex.symbol_table
-  tax.sintaxAnalisis
+
+  if lex.lexicalAnalysis
+    tax = Anatax.new(lex.symbol_table)
+    if tax.syntaxAnalysis
+      puts "Sintaxe correta"
+    else
+      puts "Erro sintático na linha #{tax.line} - '#{tax.tokenValue}' "
+    end
+  else
+    puts "Erro léxico na linha #{lex.line}: '#{lex.tokenValue}'"
+  end
 end
