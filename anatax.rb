@@ -1,6 +1,6 @@
 class Anatax
   @@i = 0
-  @@table = Array.new
+  @@table = Array.new # Tabela de simbolos
 
   def initialize(table)
     @@table = table
@@ -10,28 +10,34 @@ class Anatax
     @@table
   end
 
+  # Proximo token
   def nxt
     @@i += 1
   end
 
+  # Token anterior
   def back
     @@i -= 1
   end
 
+  # Retorna token
   def token
     if !eot
       @@table[@@i][1]
     end
   end
 
+  # Retorna valor do token
   def tokenValue
     @@table[@@i][0]
   end
 
+  # Retorna linha do token
   def line
     @@table[@@i][3]
   end
 
+  # 'End of table'
   def eot
     @@i == @@table.length
   end

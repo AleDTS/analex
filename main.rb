@@ -3,7 +3,7 @@ require_relative 'anatax'
 
 class Main
   if ARGV[0] == nil
-    name = "exemplo.pas"
+    abort("Uso: ruby main.rb <nome_do_arquivo>")
   else
     name = ARGV[0]
   end
