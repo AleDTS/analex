@@ -2,11 +2,14 @@ require_relative 'analex'
 require_relative 'anatax'
 
 class Main
-  if ARGV[0] == nil
-    abort("Uso: ruby main.rb <nome_do_arquivo>")
-  else
-    name = ARGV[0]
-  end
+  #if ARGV[0] == nil
+   # abort("Uso: ruby main.rb <nome_do_arquivo>")
+  #else
+   # name = ARGV[0]
+  #end
+
+  puts("Insira o nome do arquivo:")
+  name = gets.chomp
 
   lex = Analex.new(name)
 
@@ -20,4 +23,6 @@ class Main
   else
     puts "Erro léxico na linha #{lex.line}: '#{lex.tokenValue}'"
   end
+
+  gets.chomp()
 end
