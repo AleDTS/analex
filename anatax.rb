@@ -44,6 +44,16 @@ class Anatax
 
   #------------------------------------------
 
+  def declared
+      @@table[@@i][4] = true
+  end
+
+  def var
+      @@table[@@i][5] = 'var'
+  end
+
+  #------------------------------------------
+
   def program
     # puts "#{token} - program"
     if token == "program"
@@ -117,6 +127,8 @@ class Anatax
   def variable_declaration
     # puts "#{token} - variable_declaration"
     if token == "IDENTIFIER"
+        var
+        declared
       nxt
       if token == ":"
         nxt
@@ -125,6 +137,8 @@ class Anatax
           if token == ","
             nxt
             if token == "IDENTIFIER"
+                var
+               declared
               nxt
               if token == ":"
                 nxt
@@ -201,6 +215,7 @@ class Anatax
   def type_identifier
     # puts "#{token} - type_identifier"
     if token == "IDENTIFIER"
+        var
       return true
     end
     return false
@@ -582,7 +597,9 @@ class Anatax
 
   def variable_identifier
     # puts "#{token} - variable_identifier"
-    if ["IDENTIFIER", "STRING"].include? token
+    # if ["IDENTIFIER", "STRING"].include? token
+    if token == "IDENTIFIER"
+        var
       return true
     end
     return false

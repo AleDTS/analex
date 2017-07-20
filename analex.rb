@@ -37,10 +37,10 @@ class Analex
 
   def printTable
     @@symbol_table.each do |element|
-      puts "#{element[1]} - #{element[3]}"
+      puts "#{element[0]} -#{element[1]} - #{element[3]}"
     end
   end
-  
+
   def line
     @@line
   end
@@ -50,7 +50,7 @@ class Analex
   end
 
   def lexicalAnalysis
-    
+
     # Variavel de estado do automato
     state = 0
     @@file.each_line do |element|
@@ -75,7 +75,7 @@ class Analex
             elsif "'" == character
               state = 5
             elsif !(@@blank.include? character)
-              @@symbol_table << [character, nil, nil, @@line]
+              @@symbol_table << [character, nil, nil, @@line,nil,nil]
               return false
             end
           when 1  # Estado que le numeros
@@ -83,9 +83,9 @@ class Analex
               lexeme << character
             elsif !(@@numbers.include? character) and character != "."
               if (lexeme.to_i).abs <= 4294967295
-                @@symbol_table << [lexeme, "NUMBER", lexeme.to_i, @@line]
+                @@symbol_table << [lexeme, "NUMBER", lexeme.to_i, @@line,nil,nil]
               else  # OverFlow inteiro
-                @@symbol_table << [lexeme, nil, nil, @@line]
+                @@symbol_table << [lexeme, nil, nil, @@line,nil,nil]
                 return false
               end
               # puts "#{@@symbol_table.last}"
@@ -107,7 +107,7 @@ class Analex
               lexeme << character
               state = 12
             else # Real inválido
-              @@symbol_table << [lexeme, nil, nil, @@line]
+              @@symbol_table << [lexeme, nil, nil, @@line,nil,nil]
               return false
               # lexeme = String.new
               # # puts "#{@@symbol_table.last}"
@@ -121,7 +121,7 @@ class Analex
             if @@numbers.include? character
               lexeme << character
             elsif  (lexeme.to_f).abs <= (3.4*(10**38))
-              @@symbol_table << [lexeme, "NUMBER", lexeme.to_f, @@line]
+              @@symbol_table << [lexeme, "NUMBER", lexeme.to_f, @@line,nil,nil]
               # puts "#{@@symbol_table.last}"
               lexeme = String.new
               if !(@@blank.include? character)
@@ -133,7 +133,7 @@ class Analex
                 state = 0
               end
             else
-              symbol_tabel = [lexeme, nil, nil, @@line]
+              @@symbol_tabel = [lexeme, nil, nil, @@line,nil]
               return false
               # lexeme = String.new
               # # puts "#{@@symbol_table.last}"
@@ -143,7 +143,7 @@ class Analex
             if (@@letters.include? character or @@numbers.include? character)
               lexeme << character
             elsif  @@reserved.include? lexeme
-              @@symbol_table << [lexeme, lexeme, nil, @@line]
+              @@symbol_table << [lexeme, lexeme, nil, @@line,nil]
               # puts "#{@@symbol_table.last}"
               lexeme = String.new
               if !(@@blank.include? character)
@@ -155,7 +155,7 @@ class Analex
                 state = 0
               end
             elsif !(@@reserved.include? lexeme)
-              @@symbol_table << [lexeme, "IDENTIFIER", nil, @@line]
+              @@symbol_table << [lexeme, "IDENTIFIER", nil, @@line,nil,nil]
               lexeme = String.new
               # puts "#{@@symbol_table.last}"
               if !(@@blank.include? character)
@@ -167,7 +167,7 @@ class Analex
                 state = 0
               end
             elsif !(@@operators.include? lexeme)
-              @@symbol_table << [lexeme, lexeme, nil, @@line]
+              @@symbol_table << [lexeme, lexeme, nil, @@line,nil,nil]
               # puts "#{@@symbol_table.last}"
               lexeme = String.new
               if !(blank.include? character)
@@ -183,7 +183,7 @@ class Analex
             if @@special_meaning.include? character and @@second.include? character
               lexeme << character
             elsif @@operators.include? lexeme
-              @@symbol_table << [lexeme, lexeme, nil, @@line]
+              @@symbol_table << [lexeme, lexeme, nil, @@line,nil,nil]
               # puts "#{@@symbol_table.last}"
               lexeme = String.new
               if !(@@blank.include? character)
@@ -197,7 +197,7 @@ class Analex
                 state = 0
               end
             elsif @@delimiters.include? lexeme
-              @@symbol_table << [lexeme, lexeme, nil, @@line]
+              @@symbol_table << [lexeme, lexeme, nil, @@line,nil,nil]
               # puts "#{@@symbol_table.last}"
               lexeme = String.new
               if !(@@blank.include? character)
@@ -216,7 +216,7 @@ class Analex
               lexeme = String.new
               state = 34
             else
-              @@symbol_table << [lexeme, nil, nil, @@line]
+              @@symbol_table << [lexeme, nil, nil, @@line,nil,nil]
               return false
               # # puts "#{@@symbol_table.last}"
               # lexeme = String.new
@@ -237,7 +237,7 @@ class Analex
             end
           when 5 # Estado que le strings
             if character == "'"
-              @@symbol_table << [lexeme, "STRING", nil, @@line]
+              @@symbol_table << [lexeme, "STRING", nil, @@line,nil,nil]
               # puts "#{@@symbol_table.last}"
               lexeme = String.new
               state = 0
